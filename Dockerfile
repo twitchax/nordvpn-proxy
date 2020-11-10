@@ -2,11 +2,10 @@ FROM rust as builder
 
 RUN cargo install --git https://github.com/twitchax/rusty_socks
 
-FROM bubuntux/nordvpn:latest
+FROM bubuntux/nordvpn:3.7.4
 
 HEALTHCHECK --interval=5m --timeout=20s --start-period=1m \
-  CMD if test $( curl -m 10 -s https://api.nordvpn.com/vpn/check/full | jq -r \'.["status"]\' ) = "Protected" ; then exit 0; else exit 1; fi
-
+  CMD if test $( curl -m 10 -s https://api.nordvpn.com/vpn/check/full | jq -r '.["status"]' ) = "Protected" ; then exit 0; else exit 1; fi
 
 COPY --from=builder /usr/local/cargo/bin/rusty_socks .
 COPY rusty.toml .
